@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SanaSBMT Admin</title>
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <h2>SanaSBMT Admin</h2>
+            <ul>
+                <li class="active"><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="add-product.html"><i class="fas fa-plus-circle"></i> Add Product</a></li>
+                <li><a href="view-products.html"><i class="fas fa-boxes"></i> View Products</a></li>
+                <li><a href="import-products.html"><i class="fas fa-file-import"></i> Import Products</a></li>
+                <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+        <main class="admin-main">
+            <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #4e73df;">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Products</h3>
+                        <p id="totalProducts">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #1cc88a;">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Featured Products</h3>
+                        <p id="featuredProducts">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #f6c23e;">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Categories</h3>
+                        <p id="totalCategories">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #e74a3b;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>New Messages</h3>
+                        <p id="newMessages">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recent-products">
+                <h2><i class="fas fa-clock"></i> Recently Added Products</h2>
+                <div class="table-responsive">
+                    <table id="recentProductsTable">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Date Added</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const db = firebase.firestore();
+            
+            // Load dashboard stats
+            function loadDashboardStats() {
+                // Total products count
+                db.collection('products').get().then((snapshot) => {
+                    document.getElementById('totalProducts').textContent = snapshot.size;
+                });
+                
+                // Featured products count
+                db.collection('products').where('featured', '==', true).get().then((snapshot) => {
+                    document.getElementById('featuredProducts').textContent = snapshot.size;
+                });
+                
+                // Categories count (this requires a separate categories collection or distinct query)
+                db.collection('products').get().then((snapshot) => {
+                    const categories = new Set();
+                    snapshot.forEach(doc => {
+                        if (doc.data().category) {
+                            categories.add(doc.data().category);
+                        }
+                    });
+                    document.getElementById('totalCategories').textContent = categories.size;
+                });
+                
+                // New messages count (last 7 days)
+                const oneWeekAgo = new Date();
+                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                
+                db.collection('contacts')
+                    .where('timestamp', '>', oneWeekAgo)
+                    .get().then((snapshot) => {
+                        document.getElementById('newMessages').textContent = snapshot.size;
+                    });
+            }
+            
+            // Load recent products
+            function loadRecentProducts() {
+                const tableBody = document.querySelector('#recentProductsTable tbody');
+                
+                db.collection('products')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get()
+                    .then((querySnapshot) => {
+                        tableBody.innerHTML = '';
+                        
+                        if (querySnapshot.empty) {
+                            tableBody.innerHTML = '<tr><td colspan="5">No products found</td></tr>';
+                            return;
+                        }
+                        
+                        querySnapshot.forEach((doc) => {
+                            const product = doc.data();
+                            const date = product.createdAt ? product.createdAt.toDate().toLocaleDateString() : 'N/A';
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td><img src="${product.image}" alt="${product.name}" class="product-thumbnail"></td>
+                                <td>${product.name}</td>
+                                <td>$${product.price.toFixed(2)}</td>
+                                <td>${product.category || 'N/A'}</td>
+                                <td>${date}</td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Error getting recent products: ", error);
+                        tableBody.innerHTML = '<tr><td colspan="5">Error loading products</td></tr>';
+                    });
+            }
+            
+            loadDashboardStats();
+            loadRecentProducts();
+        });
+    </script>
+</body>
+</html>
