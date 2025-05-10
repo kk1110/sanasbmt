@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "sanasbmt",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
