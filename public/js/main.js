@@ -1,14 +1,22 @@
-// assets/js/main.js
+// Mobile Menu Toggle
 document.addEventListener('DOMContentLoaded', function() {
-    // ==================== MOBILE MENU TOGGLE ====================
-    const mobileMenuBtn = document.querySelector('.mobile-menu');
-    const nav = document.querySelector('nav');
+  const mobileMenuBtn = document.querySelector('.mobile-menu');
+  const navLinks = document.querySelector('.nav-links');
+  
+  if (mobileMenuBtn && navLinks) {
+    mobileMenuBtn.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
+      this.classList.toggle('active');
+    });
     
-    if (mobileMenuBtn && nav) {
-        mobileMenuBtn.addEventListener('click', function() {
-            nav.classList.toggle('active');
-        });
-    }
+    // Close menu when clicking on links
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        mobileMenuBtn.classList.remove('active');
+      });
+    });
+  };
 
     // ==================== FIREBASE INITIALIZATION ====================
     const firebaseConfig = {
