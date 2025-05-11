@@ -11,7 +11,7 @@
     <header>
         <div class="container">
             <div class="logo">
-                <a href="index.html"><img src="assets/images/logo.png" alt="SanaSBMT Logo"></a>
+                <a href="index.html"><img src="/images/logo.jpg" alt="SanaSBMT Logo"></a>
             </div>
             <nav>
                 <ul>
@@ -30,21 +30,27 @@
     <section class="products-header">
         <div class="container">
             <h1>Our Products</h1>
-            <div class="search-filter">
-                <input type="text" id="search-input" placeholder="Search products...">
-                <select id="category-filter">
-                    <option value="all">All Categories</option>
-                    <option value="category1">Category 1</option>
-                    <option value="category2">Category 2</option>
-                </select>
-            </div>
         </div>
     </section>
 
-    <section class="all-products">
+    <section class="products-section">
         <div class="container">
+            <div class="products-controls">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search products...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <select id="category-filter" class="category-filter">
+                    <option value="all">All Categories</option>
+                    <!-- Categories will be loaded from database -->
+                </select>
+            </div>
+            
             <div class="products-grid" id="all-products">
-                <!-- Products will be loaded via JavaScript -->
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading products...</p>
+                </div>
             </div>
         </div>
     </section>
@@ -53,6 +59,13 @@
         <!-- Same footer as index.html -->
     </footer>
 
-    <script src="assets/js/main.js"></script>
+    <script src="/js/main.js"></script>
+    
+    <!-- WhatsApp Floating Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/97313112545" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
 </body>
 </html>

@@ -1,16 +1,16 @@
 // assets/js/main.js
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile Menu Toggle
+    // ==================== MOBILE MENU TOGGLE ====================
     const mobileMenuBtn = document.querySelector('.mobile-menu');
     const nav = document.querySelector('nav');
     
-    if (mobileMenuBtn) {
+    if (mobileMenuBtn && nav) {
         mobileMenuBtn.addEventListener('click', function() {
             nav.classList.toggle('active');
         });
     }
 
-    // Initialize Firebase
+    // ==================== FIREBASE INITIALIZATION ====================
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
         authDomain: "YOUR_AUTH_DOMAIN",
@@ -20,148 +20,167 @@ document.addEventListener('DOMContentLoaded', function() {
         appId: "YOUR_APP_ID"
     };
     
-    // Initialize Firebase if not already initialized
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
 
-    // Load products from Firestore
-    function loadProducts(containerId, featuredOnly = false) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+    // Products Page Functionality
+function loadCategories() {
+    const categoryFilter = document.getElementById('category-filter');
+    if (!categoryFilter) return;
 
-        let query = db.collection('products').orderBy('createdAt', 'desc');
+    db.collection('categories').orderBy('name').get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const category = doc.data();
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = category.name;
+                categoryFilter.appendChild(option);
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading categories: ", error);
+        });
+}
+
+function loadProducts(containerId, categoryId = 'all', searchTerm = '') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    let query = db.collection('products').orderBy('createdAt', 'desc');
+
+    if (categoryId !== 'all') {
+        query = query.where('categoryId', '==', categoryId);
+    }
+
+    query.get().then((querySnapshot) => {
+        container.innerHTML = '';
         
-        if (featuredOnly) {
-            query = query.where('featured', '==', true);
+        if (querySnapshot.empty) {
+            container.innerHTML = '<p>No products found.</p>';
+            return;
         }
 
-        query.get().then((querySnapshot) => {
-            container.innerHTML = ''; // Clear loading state
+        querySnapshot.forEach((doc) => {
+            const product = doc.data();
+            product.id = doc.id;
             
-            if (querySnapshot.empty) {
-                container.innerHTML = '<p>No products found.</p>';
-                return;
-            }
-
-            querySnapshot.forEach((doc) => {
-                const product = doc.data();
-                product.id = doc.id;
+            // Apply search filter if provided
+            if (!searchTerm || product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
                 container.appendChild(createProductCard(product));
-            });
-        }).catch((error) => {
-            console.error("Error getting products: ", error);
-            container.innerHTML = '<p>Error loading products. Please try again later.</p>';
-        });
-    }
-
-    // Load featured products on home page
-    if (document.getElementById('featured-products')) {
-        loadProducts('featured-products', true);
-    }
-
-    // Load all products on products page
-    if (document.getElementById('all-products')) {
-        loadProducts('all-products');
-        setupFilters();
-    }
-
-    // Contact form submission
-    if (document.getElementById('contactForm')) {
-        setupContactForm();
-    }
-
-    function createProductCard(product) {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        
-        card.innerHTML = `
-            <div class="product-image">
-                <img src="${product.image}" alt="${product.name}" onerror="this.src='assets/images/placeholder.jpg'">
-            </div>
-            <div class="product-info">
-                <h3>${product.name}</h3>
-                <p>${product.description || 'No description available'}</p>
-                <div class="product-price">$${product.price.toFixed(2)}</div>
-                <button class="btn" onclick="addToCart('${product.id}')">Add to Cart</button>
-            </div>
-        `;
-        
-        return card;
-    }
-
-    function setupFilters() {
-        const searchInput = document.getElementById('search-input');
-        const categoryFilter = document.getElementById('category-filter');
-        const productsContainer = document.getElementById('all-products');
-        
-        if (!searchInput || !categoryFilter) return;
-
-        function filterProducts() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const category = categoryFilter.value;
-            
-            let query = db.collection('products');
-            
-            if (category !== 'all') {
-                query = query.where('category', '==', category);
             }
-            
-            query.get().then((querySnapshot) => {
-                productsContainer.innerHTML = '';
-                
-                querySnapshot.forEach((doc) => {
-                    const product = doc.data();
-                    product.id = doc.id;
-                    
-                    // Client-side search filtering
-                    if (product.name.toLowerCase().includes(searchTerm)) {
-                        productsContainer.appendChild(createProductCard(product));
-                    }
-                });
-                
-                if (productsContainer.innerHTML === '') {
-                    productsContainer.innerHTML = '<p>No products match your criteria.</p>';
+        });
+        
+        if (container.innerHTML === '') {
+            container.innerHTML = '<p>No products match your criteria.</p>';
+        }
+    }).catch((error) => {
+        console.error("Error getting products: ", error);
+        container.innerHTML = '<p>Error loading products. Please try again later.</p>';
+    });
+}
+
+// Initialize products page
+if (document.getElementById('all-products')) {
+    loadCategories();
+    loadProducts('all-products');
+    
+    // Search functionality
+    document.getElementById('search-input').addEventListener('input', function() {
+        const searchTerm = this.value;
+        const categoryId = document.getElementById('category-filter').value;
+        loadProducts('all-products', categoryId, searchTerm);
+    });
+    
+    // Category filter
+    document.getElementById('category-filter').addEventListener('change', function() {
+        const categoryId = this.value;
+        const searchTerm = document.getElementById('search-input').value;
+        loadProducts('all-products', categoryId, searchTerm);
+    });
+}
+
+    // ==================== ENHANCED CONTACT FORM ====================
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        const contactInput = document.getElementById('contact');
+        const contactIcon = document.querySelector('.input-with-icon .input-icon');
+        
+        // Dynamic icon switching
+        document.querySelectorAll('input[name="sendMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'whatsapp') {
+                    contactIcon.className = 'input-icon fab fa-whatsapp';
+                    contactIcon.style.color = '#25D366';
+                } else {
+                    contactIcon.className = 'input-icon fas fa-envelope';
+                    contactIcon.style.color = '#EA4335';
                 }
             });
-        }
-        
-        searchInput.addEventListener('input', filterProducts);
-        categoryFilter.addEventListener('change', filterProducts);
-    }
+        });
 
-    function setupContactForm() {
-        const contactForm = document.getElementById('contactForm');
-        
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
+            const name = document.getElementById('name').value;
+            const contact = document.getElementById('contact').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            const sendMethod = document.querySelector('input[name="sendMethod"]:checked').value;
+            
+            // Validation
+            if (sendMethod === 'email' && !contact.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            if (sendMethod === 'whatsapp' && !/^[0-9+]+$/.test(contact)) {
+                alert('Please enter a valid WhatsApp number');
+                return;
+            }
             
             // Save to Firestore
-            db.collection('contacts').add(formData)
-                .then(() => {
-                    alert('Thank you for your message! We will get back to you soon.');
-                    contactForm.reset();
-                })
-                .catch((error) => {
-                    console.error('Error saving contact: ', error);
-                    alert('There was an error sending your message. Please try again.');
-                });
+            db.collection('contacts').add({
+                name: name,
+                contact: contact,
+                subject: subject,
+                message: message,
+                method: sendMethod,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(error => console.error('Error saving contact:', error));
+
+            // Send via selected method
+            if (sendMethod === 'whatsapp') {
+                const whatsappMessage = `*New Message from ${name}*\n\n` +
+                                      `*Subject:* ${subject}\n` +
+                                      `*Contact:* ${contact}\n\n` +
+                                      `*Message:*\n${message}`;
+                window.open(`https://wa.me/97313112545?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+            } else {
+                const emailSubject = `Website Contact: ${subject}`;
+                const emailBody = `Name: ${name}\nContact: ${contact}\n\nMessage:\n${message}`;
+                window.location.href = `mailto:sanasbmt@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+            }
+            
+            contactForm.reset();
+        });
+    }
+
+    // ==================== WHATSAPP FLOATING BUTTON ====================
+    const whatsappFloat = document.querySelector('.whatsapp-float');
+    if (whatsappFloat) {
+        whatsappFloat.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') return;
+            window.open('https://wa.me/97313112545', '_blank');
         });
     }
 });
 
-// Global function for cart
+// Global cart function
 function addToCart(productId) {
-    // In a real app, you would add to Firestore or localStorage
+    // Implement your cart logic here
     console.log(`Product ${productId} added to cart`);
     alert('Product added to cart!');
 }
