@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>View Products - SanaSBMT Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+      <h2>SanaSBMT Admin</h2>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="add-product.html">Add Product</a></li>
+        <li class="active"><a href="view-products.html">View Products</a></li>
+        <li><a href="categories.html">Manage Categories</a></li>
+        <li><a href="#" id="logout">Logout</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <h1>Product List</h1>
+      
+      <div class="search-filter">
+        <input type="text" id="searchInput" placeholder="Search products..." />
+        <select id="categoryFilter">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      
+      <div id="productsTable" class="products-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Category</th>
+              <th>Featured</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsList">
+            <!-- Products will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Edit Product Modal -->
+      <div id="editModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>Edit Product</h2>
+          <form id="editProductForm">
+            <input type="hidden" id="editProductId" />
+            <div class="form-group">
+              <label for="editProductName">Product Name</label>
+              <input type="text" id="editProductName" required />
+            </div>
+            <div class="form-group">
+              <label for="editProductPrice">Price</label>
+              <input type="number" id="editProductPrice" step="0.01" required />
+            </div>
+            <div class="form-group">
+              <label for="editProductCategory">Category</label>
+              <select id="editProductCategory" required></select>
+            </div>
+            <div class="form-group">
+              <label for="editProductDescription">Description</label>
+              <textarea id="editProductDescription" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="editProductFeatured" /> Featured Product
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Product</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js"></script>
+
+  <script>
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    
+    // DOM elements
+    const productsList = document.getElementById('productsList');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchInput = document.getElementById('searchInput');
+    
+    // Modal elements
+    const modal = document.getElementById('editModal');
+    const closeBtn = document.querySelector('.close');
+    
+    // Load categories for filter dropdown and edit modal
+    async function loadCategories() {
+      categoryFilter.innerHTML = '<option value="">All Categories</option>';
+      const editSelect = document.getElementById('editProductCategory');
+      editSelect.innerHTML = '<option value="">Loading...</option>';
+      
+      try {
+        const snapshot = await db.collection('categories').get();
+        
+        snapshot.forEach(doc => {
+          // Add to filter dropdown
+          const option = document.createElement('option');
+          option.value = doc.id;
+          option.textContent = doc.data().name;
+          categoryFilter.appendChild(option.cloneNode(true));
+          
+          // Add to edit modal dropdown
+          editSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Error loading categories:", err);
+      }
+    }
+    
+    // Load products
+    async function loadProducts(filterCategory = '', searchTerm = '') {
+      productsList.innerHTML = '<tr><td colspan="6">Loading products...</td></tr>';
+      
+      try {
+        let query = db.collection('products');
+        
+        // Apply category filter if selected
+        if (filterCategory) {
+          query = query.where('category', '==', filterCategory);
+        }
+        
+        const snapshot = await query.get();
+        
+        if (snapshot.empty) {
+          productsList.innerHTML = '<tr><td colspan="6">No products found</td></tr>';
+          return;
+        }
+        
+        productsList.innerHTML = '';
+        
+        // Get category names for display
+        const categoriesSnapshot = await db.collection('categories').get();
+        const categories = {};
+        categoriesSnapshot.forEach(doc => {
+          categories[doc.id] = doc.data().name;
+        });
+        
+        // Process each product
+        snapshot.forEach(doc => {
+          const product = doc.data();
+          const productId = doc.id;
+          
+          // Apply search filter if provided
+          if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+            return;
+          }
+          
+          productsList.innerHTML += `
+            <tr>
+              <td><img src="${product.image}" alt="${product.name}" class="product-thumbnail" /></td>
+              <td>${product.name}</td>
+              <td>$${product.price.toFixed(2)}</td>
+              <td>${categories[product.category] || 'N/A'}</td>
+              <td>${product.featured ? 'Yes' : 'No'}</td>
+              <td>
+                <button class="btn btn-sm btn-edit" data-id="${productId}">Edit</button>
+                <button class="btn btn-sm btn-danger" data-id="${productId}">Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+        
+        // Add event listeners to edit/delete buttons
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+          btn.addEventListener('click', () => openEditModal(btn.getAttribute('data-id')));
+        });
+        
+        document.querySelectorAll('.btn-danger').forEach(btn => {
+          btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-id')));
+        });
+        
+      } catch (err) {
+        console.error("Error loading products:", err);
+        productsList.innerHTML = '<tr><td colspan="6">Error loading products</td></tr>';
+      }
+    }
+    
+    // Open edit modal
+    async function openEditModal(productId) {
+      try {
+        const doc = await db.collection('products').doc(productId).get();
+        if (!doc.exists) {
+          alert("Product not found");
+          return;
+        }
+        
+        const product = doc.data();
+        
+        document.getElementById('editProductId').value = productId;
+        document.getElementById('editProductName').value = product.name;
+        document.getElementById('editProductPrice').value = product.price;
+        document.getElementById('editProductDescription').value = product.description;
+        document.getElementById('editProductFeatured').checked = product.featured || false;
+        
+        // Set category in dropdown
+        const categorySelect = document.getElementById('editProductCategory');
+        if (product.category) {
+          categorySelect.value = product.category;
+        }
+        
+        modal.style.display = 'block';
+      } catch (err) {
+        console.error("Error opening edit modal:", err);
+        alert("Error loading product details");
+      }
+    }
+    
+    // Update product
+    document.getElementById('editProductForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const productId = document.getElementById('editProductId').value;
+      
+      try {
+        await db.collection('products').doc(productId).update({
+          name: document.getElementById('editProductName').value,
+          price: parseFloat(document.getElementById('editProductPrice').value),
+          category: document.getElementById('editProductCategory').value,
+          description: document.getElementById('editProductDescription').value,
+          featured: document.getElementById('editProductFeatured').checked
+        });
+        
+        alert("Product updated successfully");
+        modal.style.display = 'none';
+        loadProducts(categoryFilter.value, searchInput.value.trim());
+      } catch (err) {
+        console.error("Error updating product:", err);
+        alert("Error updating product");
+      }
+    });
+    
+    // Delete product
+    async function deleteProduct(productId) {
+      if (!confirm("Are you sure you want to delete this product?")) return;
+      
+      try {
+        await db.collection('products').doc(productId).delete();
+        alert("Product deleted successfully");
+        loadProducts(categoryFilter.value, searchInput.value.trim());
+      } catch (err) {
+        console.error("Error deleting product:", err);
+        alert("Error deleting product");
+      }
+    }
+    
+    // Close modal
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+    
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+    
+    // Filter products by category
+    categoryFilter.addEventListener('change', () => {
+      loadProducts(categoryFilter.value, searchInput.value.trim());
+    });
+    
+    // Search products
+    searchInput.addEventListener('input', () => {
+      loadProducts(categoryFilter.value, searchInput.value.trim());
+    });
+    
+    // Logout functionality
+    document.getElementById('logout').addEventListener('click', function(e) {
+      e.preventDefault();
+      firebase.auth().signOut().then(() => {
+        window.location.href = 'login.html';
+      });
+    });
+    
+    // Check auth state
+    firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+      } else {
+        loadCategories();
+        loadProducts();
+      }
+    });
+  </script>
+</body>
+</html>
