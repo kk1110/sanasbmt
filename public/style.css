@@ -288,17 +288,29 @@ nav {
   }
 
   .mobile-menu {
-    display: block;
-  }
+  display: block;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: white;
+  margin-left: 1rem;
+}
 
-  /* Animation for hamburger icon */
-  .mobile-menu.active i.fa-bars {
-    display: none;
-  }
+.mobile-menu i.fa-bars {
+  display: inline-block;
+}
 
-  .mobile-menu:not(.active) i.fa-times {
-    display: none;
-  }
+.mobile-menu i.fa-times {
+  display: none;
+}
+
+.mobile-menu.active i.fa-bars {
+  display: none;
+}
+
+.mobile-menu.active i.fa-times {
+  display: inline-block;
+}
+
 }
 
 /* ===== COMPACT & ELEGANT HERO SECTION ===== */
