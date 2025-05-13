@@ -1,96 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Manage Categories - SanaSBMT Admin</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="../admin.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Categories</title>
+  <link rel="stylesheet" href="../admin.css">
 </head>
 <body>
-  <div class="admin-container">
-    <aside class="admin-sidebar">
-      <h2>SanaSBMT Admin</h2>
-      <ul>
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="add-product.html">Add Product</a></li>
-        <li><a href="view-products.html">View Products</a></li>
-        <li class="active"><a href="categories.html">Manage Categories</a></li>
-        <li><a href="#" id="logout">Logout</a></li>
-      </ul>
-    </aside>
+  <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
 
-    <main class="admin-main">
-      <h1>Product Categories</h1>
+  <div class="container">
+    <h2>Manage Categories</h2>
+    <input type="text" id="categoryName" placeholder="Enter Category Name">
+    <button onclick="saveCategory()">Save Category</button>
+    <div class="success" id="successMsg"></div>
 
-      <form id="categoryForm">
-        <div class="form-group">
-          <label for="categoryName">New Category Name</label>
-          <input type="text" id="categoryName" required />
-        </div>
-        <button type="submit" class="btn btn-success">Add Category</button>
-      </form>
-
-      <h2>Existing Categories</h2>
-      <ul id="categoryList" class="category-list"></ul>
-    </main>
+    <table id="categoryTable">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+        </tr>
+      </thead>
+      <tbody id="categoryList">
+        <!-- Dynamic rows will appear here -->
+      </tbody>
+    </table>
   </div>
 
- <!-- Replace /firebase-config.js and Firebase references with: -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
+  <script type="module">
+    import { auth, onAuthStateChanged, db, ref, push, set, get, child } from './firebase-config.js';
 
-<script>
-  const firebaseConfig = { /* your config */ };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  auth.onAuthStateChanged(user => {
-    if (!user) window.location.href = 'login.html';
-  });
-
-  document.getElementById('logout').addEventListener('click', e => {
-    e.preventDefault();
-    auth.signOut().then(() => window.location.href = 'login.html');
-  });
-
-  const list = document.getElementById('categoryList');
-
-  async function loadCategories() {
-    list.innerHTML = '';
-    const snapshot = await db.collection('categories').get();
-    snapshot.forEach(doc => {
-      const li = document.createElement('li');
-      li.innerHTML = `${doc.data().name}
-        <button class="btn btn-danger btn-sm" data-id="${doc.id}">Delete</button>`;
-      list.appendChild(li);
-    });
-  }
-
-  document.getElementById('categoryForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const name = document.getElementById('categoryName').value.trim();
-    if (!name) return;
-    await db.collection('categories').add({ name });
-    alert("Category added");
-    e.target.reset();
-    loadCategories();
-  });
-
-  list.addEventListener('click', async function(e) {
-    if (e.target.tagName === 'BUTTON') {
-      const id = e.target.getAttribute('data-id');
-      if (confirm("Delete this category?")) {
-        await db.collection('categories').doc(id).delete();
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
         loadCategories();
       }
+    });
+
+    async function saveCategory() {
+      const categoryName = document.getElementById("categoryName").value.trim();
+      if (!categoryName) {
+        alert("Please enter a category name.");
+        return;
+      }
+
+      try {
+        const newCatRef = push(ref(db, 'categories'));
+        await set(newCatRef, {
+          name: categoryName,
+          createdAt: new Date().toISOString()
+        });
+
+        document.getElementById("successMsg").textContent = "Category saved successfully!";
+        document.getElementById("categoryName").value = '';
+        loadCategories();
+      } catch (error) {
+        console.error("Error saving category:", error);
+        alert("Failed to save category.");
+      }
     }
-  });
 
-  loadCategories();
-</script>
+    async function loadCategories() {
+      const categoryList = document.getElementById("categoryList");
+      categoryList.innerHTML = "";
 
+      try {
+        const snapshot = await get(child(ref(db), 'categories'));
+        if (snapshot.exists()) {
+          const categories = snapshot.val();
+          Object.keys(categories).forEach(key => {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.textContent = categories[key].name;
+            row.appendChild(cell);
+            categoryList.appendChild(row);
+          });
+        }
+      } catch (error) {
+        console.error("Error loading categories:", error);
+      }
+    }
+
+    window.saveCategory = saveCategory;
+  </script>
 </body>
 </html>

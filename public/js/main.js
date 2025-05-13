@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
     // ==================== FIREBASE INITIALIZATION ====================
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    };
+  const firebaseConfig = {
+  apiKey: "AIzaSyA-0ZJ7ZTZbMVjUT7HsWNz__bwHN1vLtNo",
+  authDomain: "sanasbmt-c5884.firebaseapp.com",
+  projectId: "sanasbmt-c5884",
+  storageBucket: "sanasbmt-c5884.firebasestorage.app",
+  messagingSenderId: "16153242421",
+  appId: "1:16153242421:web:1f9b89c61fbb294f71ba7c"
+};
     
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);

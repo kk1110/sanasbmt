@@ -1,161 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - SanaSBMT Admin</title>
-  <link rel="stylesheet" href="../admin.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../admin.css">
 </head>
 <body>
-  <div class="admin-container">
-    <aside class="admin-sidebar">
-      <h2>SanaSBMT Admin</h2>
-      <ul>
-        <li class="active"><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="add-product.html">Add Product</a></li>
-        <li><a href="view-products.html">View Products</a></li>
-        <li><a href="categories.html">Manage Categories</a></li>
-        <li><a href="#" id="logout">Logout</a></li>
-      </ul>
-    </aside>
-
-    <main class="admin-main">
-      <h1>Dashboard</h1>
-      
-      <div class="stats-container">
-        <div class="stat-card">
-          <h3>Total Products</h3>
-          <p id="totalProducts">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Total Categories</h3>
-          <p id="totalCategories">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Featured Products</h3>
-          <p id="featuredProducts">0</p>
-        </div>
-      </div>
-
-      <h2>Recent Products</h2>
-      <div id="recentProducts" class="products-grid"></div>
-    </main>
+  <div class="container">
+    <h1>Welcome to Admin Dashboard</h1>
+    <div class="grid">
+      <div class="card" onclick="location.href='add-product.html'">Add Product</div>
+      <div class="card" onclick="location.href='view-products.html'">View Products</div>
+      <div class="card" onclick="location.href='categories.html'">Manage Categories</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
 
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - SanaSBMT Admin</title>
-  <link rel="stylesheet" href="../admin.css" />
-</head>
-<body>
-  <div class="admin-container">
-    <aside class="admin-sidebar">
-      <h2>SanaSBMT Admin</h2>
-      <ul>
-        <li class="active"><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="add-product.html">Add Product</a></li>
-        <li><a href="view-products.html">View Products</a></li>
-        <li><a href="categories.html">Manage Categories</a></li>
-        <li><a href="#" id="logout">Logout</a></li>
-      </ul>
-    </aside>
+  <script type="module">
+    import { auth, onAuthStateChanged, signOut } from './firebase-config.js';
 
-    <main class="admin-main">
-      <h1>Dashboard</h1>
-      
-      <div class="stats-container">
-        <div class="stat-card">
-          <h3>Total Products</h3>
-          <p id="totalProducts">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Total Categories</h3>
-          <p id="totalCategories">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Featured Products</h3>
-          <p id="featuredProducts">0</p>
-        </div>
-      </div>
-
-      <h2>Recent Products</h2>
-      <div id="recentProducts" class="products-grid"></div>
-    </main>
-  </div>
-
-  <!-- Firebase CDN -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
-
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    // Init Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    // Logout
-    document.getElementById('logout').addEventListener('click', function(e) {
-      e.preventDefault();
-      auth.signOut().then(() => {
-        window.location.href = 'login.html';
-      });
-    });
-
-    // Auth check
-    auth.onAuthStateChanged((user) => {
+    onAuthStateChanged(auth, (user) => {
       if (!user) {
-        window.location.href = 'login.html';
-      } else {
-        loadDashboard();
+        window.location.href = "login.html";
       }
     });
 
-    // Load stats
-    async function loadDashboard() {
-      try {
-        const productsSnapshot = await db.collection('products').get();
-        document.getElementById('totalProducts').textContent = productsSnapshot.size;
-
-        const categoriesSnapshot = await db.collection('categories').get();
-        document.getElementById('totalCategories').textContent = categoriesSnapshot.size;
-
-        const featuredSnapshot = await db.collection('products').where('featured', '==', true).get();
-        document.getElementById('featuredProducts').textContent = featuredSnapshot.size;
-
-        const recentSnapshot = await db.collection('products').orderBy('createdAt', 'desc').limit(5).get();
-        const container = document.getElementById('recentProducts');
-        container.innerHTML = '';
-
-        recentSnapshot.forEach(doc => {
-          const product = doc.data();
-          container.innerHTML += `
-            <div class="product-card">
-              <img src="${product.image}" alt="${product.name}" />
-              <h3>${product.name}</h3>
-              <p>$${product.price.toFixed(2)}</p>
-            </div>`;
-        });
-      } catch (err) {
-        console.error("Dashboard error:", err);
-      }
-    }
+    window.logout = function() {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      }).catch((error) => {
+        console.error("Logout error:", error);
+      });
+    };
   </script>
-</body>
-</html>
-
 </body>
 </html>

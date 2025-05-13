@@ -1,69 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - SanaSBMT Admin</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="../admin.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="../admin.css">
 </head>
 <body>
   <div class="login-container">
-    <div class="login-box">
-      <h1>SanaSBMT Admin</h1>
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" required />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" required />
-        </div>
-        <button type="submit" class="btn btn-primary">Login</button>
-      </form>
-    </div>
+    <h2>Admin Login</h2>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="loginUser()">Login</button>
+    <div class="error" id="error"></div>
   </div>
 
-  <!-- ✅ Firebase UMD/Compat Scripts (safe for <script> usage) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script type="module">
+    import { auth, signInWithEmailAndPassword } from './firebase-config.js';
 
-  <script>
-    // ✅ Your Firebase config here
-    const firebaseConfig = {
-  apiKey: "AIzaSyA-0ZJ7ZTZbMVjUT7HsWNz__bwHN1vLtNo",
-  authDomain: "sanasbmt-c5884.firebaseapp.com",
-  projectId: "sanasbmt-c5884",
-  storageBucket: "sanasbmt-c5884.firebasestorage.app",
-  messagingSenderId: "16153242421",
-  appId: "1:16153242421:web:1f9b89c61fbb294f71ba7c"
-};
-
-    // ✅ Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // ✅ Handle login
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+    async function loginUser() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorDiv = document.getElementById("error");
 
       try {
-        await auth.signInWithEmailAndPassword(email, password);
-        window.location.href = 'dashboard.html';
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "dashboard.html";
       } catch (error) {
-        alert("Login failed: " + error.message);
+        errorDiv.textContent = "Invalid email or password.";
+        console.error("Login error:", error.message);
       }
-    });
+    }
 
-    // ✅ If already logged in, redirect
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        window.location.href = 'dashboard.html';
-      }
-    });
+    window.loginUser = loginUser;
   </script>
 </body>
 </html>
