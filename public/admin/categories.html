@@ -1,88 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Manage Categories</title>
-  <link rel="stylesheet" href="../admin.css">
+  <link rel="stylesheet" href="../css/admin.css" />
 </head>
 <body>
   <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
-
   <div class="container">
     <h2>Manage Categories</h2>
-    <input type="text" id="categoryName" placeholder="Enter Category Name">
-    <button onclick="saveCategory()">Save Category</button>
-    <div class="success" id="successMsg"></div>
+    <form id="categoryForm">
+  <input type="text" id="categoryName" placeholder="Enter Category Name" required />
+  <button type="submit">Save Category</button>
+   </form>
 
-    <table id="categoryTable">
-      <thead>
-        <tr>
-          <th>Category Name</th>
-        </tr>
-      </thead>
-      <tbody id="categoryList">
-        <!-- Dynamic rows will appear here -->
-      </tbody>
+    <table>
+      <thead><tr><th>Category Name</th><th>Actions</th></tr></thead>
+      <tbody id="categoryList"></tbody>
     </table>
   </div>
-
-  <script type="module">
-    import { auth, onAuthStateChanged, db, ref, push, set, get, child } from './firebase-config.js';
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-      } else {
-        loadCategories();
-      }
-    });
-
-    async function saveCategory() {
-      const categoryName = document.getElementById("categoryName").value.trim();
-      if (!categoryName) {
-        alert("Please enter a category name.");
-        return;
-      }
-
-      try {
-        const newCatRef = push(ref(db, 'categories'));
-        await set(newCatRef, {
-          name: categoryName,
-          createdAt: new Date().toISOString()
-        });
-
-        document.getElementById("successMsg").textContent = "Category saved successfully!";
-        document.getElementById("categoryName").value = '';
-        loadCategories();
-      } catch (error) {
-        console.error("Error saving category:", error);
-        alert("Failed to save category.");
-      }
-    }
-
-    async function loadCategories() {
-      const categoryList = document.getElementById("categoryList");
-      categoryList.innerHTML = "";
-
-      try {
-        const snapshot = await get(child(ref(db), 'categories'));
-        if (snapshot.exists()) {
-          const categories = snapshot.val();
-          Object.keys(categories).forEach(key => {
-            const row = document.createElement("tr");
-            const cell = document.createElement("td");
-            cell.textContent = categories[key].name;
-            row.appendChild(cell);
-            categoryList.appendChild(row);
-          });
-        }
-      } catch (error) {
-        console.error("Error loading categories:", error);
-      }
-    }
-
-    window.saveCategory = saveCategory;
-  </script>
+  <script type="module" src="../js/save-category.js"></script>
 </body>
 </html>

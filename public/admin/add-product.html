@@ -1,95 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Add Product</title>
-  <link rel="stylesheet" href="../admin.css">
+  <link rel="stylesheet" href="../css/admin.css" />
 </head>
 <body>
   <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
-
   <div class="container">
-    <h2>Add New Product</h2>
-    <input type="text" id="productName" placeholder="Product Name">
-    <textarea id="productDesc" placeholder="Product Description"></textarea>
-    <input type="number" id="productPrice" placeholder="Price (in ₹)" step="0.01">
-    <input type="url" id="productImage" placeholder="Image URL">
-    <select id="productCategory">
-      <option value="">Select Category</option>
-    </select>
-    <button onclick="saveProduct()">Save Product</button>
-    <div class="success" id="successMsg"></div>
+    <h2>Add Product</h2>
+    <form id="productForm">
+      <label for="name">Product Name</label>
+      <input type="text" id="name" placeholder="Product Name" required />
+
+      <label for="price">Price</label>
+      <input type="number" id="price" placeholder="Price" required />
+
+      <label for="description">Description</label>
+      <textarea id="description" placeholder="Description"></textarea>
+
+      <label for="category">Category</label>
+      <select id="category" required>
+        <option value="">Select Category</option>
+      </select>
+
+      <label for="imageUrl">Image URL</label>
+      <input type="url" id="imageUrl" placeholder="Paste a direct image link (e.g. https://...jpg)" required />
+      <small style="color: #888; display: block; margin-bottom: 10px;">Tip: Upload your image to <a href='https://imgbb.com/' target='_blank'>imgbb.com</a> or similar, then paste the direct link here.</small>
+
+      <div style="margin: 10px 0 0 0;">
+        <input type="checkbox" id="isFeatured" />
+        <label for="isFeatured" style="display: inline; font-weight: 400;">Featured Product</label>
+      </div>
+
+      <button type="submit">Add Product</button>
+    </form>
   </div>
-
-  <script type="module">
-    import { auth, onAuthStateChanged, db, ref, push, set, get, child } from './firebase-config.js';
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-      } else {
-        loadCategories();
-      }
-    });
-
-    async function loadCategories() {
-      const categoryDropdown = document.getElementById("productCategory");
-      categoryDropdown.innerHTML = '<option value="">Select Category</option>';
-      
-      try {
-        const snapshot = await get(child(ref(db), 'categories'));
-        if (snapshot.exists()) {
-          const categories = snapshot.val();
-          Object.keys(categories).forEach(key => {
-            const option = document.createElement("option");
-            option.value = categories[key].name;
-            option.textContent = categories[key].name;
-            categoryDropdown.appendChild(option);
-          });
-        }
-      } catch (error) {
-        console.error("Error loading categories:", error);
-      }
-    }
-
-    async function saveProduct() {
-      const name = document.getElementById("productName").value.trim();
-      const desc = document.getElementById("productDesc").value.trim();
-      const price = document.getElementById("productPrice").value.trim();
-      const image = document.getElementById("productImage").value.trim();
-      const category = document.getElementById("productCategory").value;
-
-      if (!name || !desc || !price || !image || !category) {
-        alert("Please fill in all fields");
-        return;
-      }
-
-      try {
-        const newProductRef = push(ref(db, 'products'));
-        await set(newProductRef, {
-          name,
-          description: desc,
-          price,
-          image,
-          category,
-          createdAt: new Date().toISOString()
-        });
-
-        document.getElementById("successMsg").textContent = "Product saved successfully!";
-        // Clear form
-        document.getElementById("productName").value = '';
-        document.getElementById("productDesc").value = '';
-        document.getElementById("productPrice").value = '';
-        document.getElementById("productImage").value = '';
-        document.getElementById("productCategory").value = '';
-      } catch (error) {
-        console.error("Save error:", error);
-        alert("Error saving product");
-      }
-    }
-
-    window.saveProduct = saveProduct;
-  </script>
+  <script type="module" src="../js/add-product.js"></script>
 </body>
 </html>

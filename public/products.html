@@ -6,33 +6,37 @@
     <title>SanaSBMT - Products</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Removed page-specific <style> block, styles are now in style.css -->
 </head>
 <body>
+    <!-- Header Section (same as your original) -->
     <header>
-  <div class="header-container container">
-    <div class="logo">
-      <a href="index.html"><img src="/images/logo.jpg" alt="SanaSBMT Logo"></a>
-    </div>
-    
-    <nav>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="products.html">Products</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-      
-      <div class="mobile-menu">
-        <i class="fas fa-bars"></i>
-        <i class="fas fa-times"></i>
-      </div>
-    </nav>
-  </div>
-</header>
+        <div class="header-container container">
+            <div class="logo">
+                <a href="index.html"><img src="/images/logo.jpg" alt="SanaSBMT Logo"></a>
+            </div>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-times"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
 
+    <!-- Products Section -->
     <section class="products-header">
         <div class="container">
             <h1>Our Products</h1>
+            <p class="subtitle">Browse our complete collection of building materials</p>
         </div>
     </section>
 
@@ -45,7 +49,7 @@
                 </div>
                 <select id="category-filter" class="category-filter">
                     <option value="all">All Categories</option>
-                    <!-- Categories will be loaded from database -->
+                    <!-- Categories will be loaded dynamically -->
                 </select>
             </div>
             
@@ -58,17 +62,49 @@
         </div>
     </section>
 
+    <!-- Footer Section (same as your original) -->
     <footer>
-        <!-- Same footer as index.html -->
+        <div class="container">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Blgd 15,Road 06,
+                   <br> Block# 406 Sanabis,<br> Kingdom of Bahrain</p>
+                <p><i class="fas fa-phone"></i>Telephone +973 1311 2545</p>
+                <p><i class="fab fa-whatsapp"></i> <a href="https://wa.me/97333553787" target="_blank"> WhatsApp +973 3355 3787</a></p>
+                <p><i class="fas fa-envelope"></i><a href="mailto:sanasbmt@gmail.com">Email: sanasbmt@gmail.com</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Sanas BMT. All rights reserved.</p>
+        </div>
     </footer>
 
-    <script src="/js/main.js"></script>
-    
     <!-- WhatsApp Floating Button -->
     <div class="whatsapp-float">
-        <a href="https://wa.me/97313112545" target="_blank">
+        <a href="https://wa.me/97333553787" target="_blank">
             <i class="fab fa-whatsapp"></i>
         </a>
     </div>
+
+    <!-- Main JavaScript -->
+    <script src="/js/main.js"></script>
+    <script src="/js/products-page.js"></script>
 </body>
 </html>

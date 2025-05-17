@@ -9,44 +9,48 @@
 </head>
 <body>
     <header>
-  <div class="header-container container">
-    <div class="logo">
-      <a href="index.html"><img src="/images/logo.jpg" alt="SanaSBMT Logo"></a>
-    </div>
-    
-    <nav>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="products.html">Products</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-      
-      <div class="mobile-menu">
-        <i class="fas fa-bars"></i>
-        <i class="fas fa-times"></i>
-      </div>
-    </nav>
-  </div>
-</header>
+        <div class="header-container container">
+            <div class="logo">
+                <a href="index.html"><img src="/images/logo.jpg" alt="SanaSBMT Logo"></a>
+            </div>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-times"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
 
     <section class="hero">
-  <div class="hero-content">
-    <h1>Welcome to Sanas Building Materials</h1>
-    <h2 class="tagline">Quality products at affordable prices</h2>
-    <br>
-    <a href="products.html" class="btn">Shop Now</a>
-  </div>
-</section>
-
-    <section class="featured-products">
-        <div class="container">
-            <h2>Featured Products</h2>
-            <div class="products-grid" id="featured-products">
-                
-            </div>
+        <div class="hero-content">
+            <h1>Welcome to Sanas Building Materials</h1>
+            <h2 class="tagline">Quality products at affordable prices</h2>
+            <br>
+            <a href="products.html" class="btn">Shop Now</a>
         </div>
     </section>
+
+    <!-- In the featured products section of index.html -->
+<section class="featured-products">
+    <div class="container">
+        <h2>Featured Products</h2>
+        <div class="products-grid" id="featured-products">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading featured products...</p>
+            </div>
+        </div>
+    </div>
+</section>
 
     <section class="about-section">
         <div class="container">
@@ -68,18 +72,16 @@
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="products.html">Products</a></li>
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="about.html">About</a></li> <!-- Consistent naming -->
                     <li><a href="contact.html">Contact</a></li>
                 </ul>
             </div>
             <div class="footer-section">
                 <h3>Contact Info</h3>
-                <p><i class="fas fa-map-marker-alt"></i> Blgd 15,Road 06,
-                   <br> Block# 406 Sanabis,<br> Kingdom of Bahrain</p>
-                <p><i class="fas fa-phone"></i>Telephone +973 1311 2545</p>
+                <p><i class="fas fa-map-marker-alt"></i> Blgd 15, Road 06,<br>Block# 406 Sanabis,<br>Kingdom of Bahrain</p>
+                <p><i class="fas fa-phone"></i> Telephone +973 1311 2545</p>
                 <p><i class="fab fa-whatsapp"></i> <a href="https://wa.me/97333553787" target="_blank"> WhatsApp +973 3355 3787</a></p>
-
-                <p><i class="fas fa-envelope"></i><a href="mailto:sanasbmt@gmail.com">Email: sanasbmt@gmail.com</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:sanasbmt@gmail.com">Email: sanasbmt@gmail.com</a></p>
             </div>
             <div class="footer-section">
                 <h3>Follow Us</h3>
@@ -95,12 +97,17 @@
         </div>
     </footer>
 
-    <script src="/js/main.js"></script>
     <!-- WhatsApp Floating Button -->
-<div class="whatsapp-float">
-    <a href="https://wa.me/97333553787" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-</div>
+    <div class="whatsapp-float">
+        <a href="https://wa.me/97333553787" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="./js/featured-products.js"></script>
 </body>
 </html>
