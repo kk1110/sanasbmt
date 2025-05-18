@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
  function createProductCard(product, id) {
     const card = document.createElement('div');
     card.className = 'product-card';
-    const featuredBadge = product.isFeatured ? 
-        '<span class="featured-badge">Featured</span>' : '';
+    const featuredBadge = product.isFeatured ?
+    '<span class="featured-badge" style="background:#ffc107;color:#222;">Top Selling</span>' : '';
     // Build product link (adjust the URL if your details page is different)
     const productUrl = `${window.location.origin}/product-details.html?id=${id}`;
     // WhatsApp message with product details and link

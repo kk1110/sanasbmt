@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (whatsappFloat) {
     whatsappFloat.addEventListener('click', function(e) {
       if (e.target.tagName === 'A') return;
-      window.open('https://wa.me/97313112545', '_blank');
+      window.open('https://wa.me/97333553787', '_blank');
     });
   }
 });

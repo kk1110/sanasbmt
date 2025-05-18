@@ -51,7 +51,7 @@ function createProductCard(product, id) {
     const card = document.createElement('div');
     card.className = 'product-card';
     const featuredBadge = product.isFeatured ?
-        '<span class="featured-badge">Featured</span>' : '';
+    '<span class="featured-badge" style="background:#ffc107;color:#222;">Top Selling</span>' : '';
     const productUrl = `${window.location.origin}/product-details.html?id=${id}`;
     const whatsappMsg =
         `I'm interested in ${product.name} (${product.price} BHD).\n${product.description || ''}\n${productUrl}`;

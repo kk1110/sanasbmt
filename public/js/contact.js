@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                               `*Subject:* ${subject}\n` +
                               `*Contact:* ${contact}\n\n` +
                               `*Message:*\n${message}`;
-        window.open(`https://wa.me/97313112545?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+        window.open(`https://wa.me/97333553787?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
       } else {
         const emailSubject = `Website Contact: ${subject}`;
         const emailBody = `Name: ${name}\nContact: ${contact}\n\nMessage:\n${message}`;
