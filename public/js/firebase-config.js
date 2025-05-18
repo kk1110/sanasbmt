@@ -1,6 +1,5 @@
-// Initialize Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getDatabase, ref, push, set, get, child, remove } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+import { getDatabase, ref, push, set, get, child, remove, query, orderByChild, equalTo, limitToLast } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
@@ -19,11 +18,8 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-export { db, auth, ref, push, set, get, child, onAuthStateChanged,remove,storage};
-
-
-
-
-
-
-
+export { 
+  db, auth, ref, push, set, get, child, remove, 
+  query, orderByChild, equalTo, limitToLast, 
+  onAuthStateChanged, storage 
+};

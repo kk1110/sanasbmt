@@ -1,19 +1,39 @@
+import { db, ref, get, query, orderByChild, equalTo, limitToLast, child } from './firebase-config.js';
+
+let categoryMap = {};
+
 document.addEventListener('DOMContentLoaded', function() {
+    // 1. Load categories first
+    get(child(ref(db), 'categories')).then((snapshot) => {
+        if (snapshot.exists()) {
+            snapshot.forEach((catSnap) => {
+                categoryMap[catSnap.key] = catSnap.val().name;
+            });
+        }
+        // 2. Now load featured products
+        loadFeaturedProducts();
+    });
+});
+
+function loadFeaturedProducts() {
     if (document.getElementById('featured-products')) {
-        // Reference to your Firebase database
-        const dbRef = firebase.database().ref('products');
-        
-        // Query only featured products
-        dbRef.orderByChild('isFeatured').equalTo(true).limitToLast(4).once('value')
+        const productsRef = ref(db, 'products');
+        const featuredQuery = query(
+            productsRef,
+            orderByChild('isFeatured'),
+            equalTo(true),
+            limitToLast(4)
+        );
+
+        get(featuredQuery)
             .then((snapshot) => {
                 const container = document.getElementById('featured-products');
                 container.innerHTML = '';
-                
                 if (snapshot.exists()) {
                     snapshot.forEach((childSnapshot) => {
                         const product = childSnapshot.val();
-                        product.id = childSnapshot.key;
-                        container.appendChild(createProductCard(product, true));
+                        const id = childSnapshot.key;
+                        container.appendChild(createProductCard(product, id));
                     });
                 } else {
                     container.innerHTML = '<p>No featured products available.</p>';
@@ -21,29 +41,37 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch((error) => {
                 console.error("Error loading featured products: ", error);
-                document.getElementById('featured-products').innerHTML = 
+                document.getElementById('featured-products').innerHTML =
                     '<p class="error">Error loading featured products.</p>';
             });
     }
-});
+}
 
-function createProductCard(product, isFeatured = false) {
+function createProductCard(product, id) {
     const card = document.createElement('div');
     card.className = 'product-card';
-    
+    const featuredBadge = product.isFeatured ?
+        '<span class="featured-badge">Featured</span>' : '';
+    const productUrl = `${window.location.origin}/product-details.html?id=${id}`;
+    const whatsappMsg =
+        `I'm interested in ${product.name} (${product.price} BHD).\n${product.description || ''}\n${productUrl}`;
     card.innerHTML = `
         <div class="product-image">
             <img src="${product.image || '/images/product-placeholder.jpg'}" alt="${product.name}">
+            ${featuredBadge}
         </div>
-        <h3>${product.name}</h3>
-        <p class="price">${product.price}BHD</p>
-        ${isFeatured ? 
-            `<a href="products.html#${product.id}" class="btn">View Details</a>` : 
-            `<button class="btn" onclick="addToCart('${product.id}')">Add to Cart</button>
-             <a href="https://wa.me/97333553787?text=I'm interested in ${encodeURIComponent(product.name)}" 
-                class="btn whatsapp-btn" target="_blank"><i class="fab fa-whatsapp"></i> Enquire</a>`
-        }
+        <div class="product-info">
+            <h3>${product.name}</h3>
+            <p class="price">${product.price} BHD</p>
+            <p class="category">${categoryMap[product.category] || 'Uncategorized'}</p>
+            <p class="description">${product.description || ''}</p>
+        </div>
+        <div class="product-actions">
+            <a href="https://wa.me/97333553787?text=${encodeURIComponent(whatsappMsg)}"
+               class="btn whatsapp-btn" target="_blank">
+                <i class="fab fa-whatsapp"></i> Enquire
+            </a>
+        </div>
     `;
-    
     return card;
 }
