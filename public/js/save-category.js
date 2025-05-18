@@ -1,4 +1,12 @@
-import { db, ref, push, get, child,remove} from './firebase-config.js';
+import { db, ref, push, get, child,remove, auth, onAuthStateChanged} from './firebase-config.js';
+
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
+});
+
 
 const categoryList = document.getElementById("categoryList");
 

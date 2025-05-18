@@ -1,4 +1,14 @@
 import { db, ref, push, get, child } from './firebase-config.js';
+// Add this at the top of your admin JS files
+import { auth, onAuthStateChanged } from './firebase-config.js';
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
+});
+
+
 
 const categorySelect = document.getElementById("category");
 
