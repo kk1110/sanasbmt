@@ -31,9 +31,12 @@ function createProductCard(product, isFeatured = false) {
     const card = document.createElement('div');
     card.className = 'product-card';
     
-    card.innerHTML = `        <img src="${product.image || '/images/product-placeholder.jpg'}" alt="${product.name}">
+    card.innerHTML = `
+        <div class="product-image">
+            <img src="${product.image || '/images/product-placeholder.jpg'}" alt="${product.name}">
+        </div>
         <h3>${product.name}</h3>
-        <p class="price">₹${product.price}</p>
+        <p class="price">${product.price}BHD</p>
         ${isFeatured ? 
             `<a href="products.html#${product.id}" class="btn">View Details</a>` : 
             `<button class="btn" onclick="addToCart('${product.id}')">Add to Cart</button>

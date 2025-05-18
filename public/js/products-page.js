@@ -1,18 +1,21 @@
-// Products Page JavaScript (moved from products.html)
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if Firebase is initialized
     if (typeof db === 'undefined') {
         console.error('Firebase not initialized. Make sure main.js is loaded first.');
         return;
     }
 
-    // Load categories for filter dropdown
+    let categoryMap = {};
+
+    // Load categories for filter dropdown and for mapping categoryId to name
     function loadCategories() {
         const categoryFilter = document.getElementById('category-filter');
+        if (!categoryFilter) return;
+        categoryFilter.innerHTML = '<option value="all">All Categories</option>';
         db.collection('categories').orderBy('name').get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     const category = doc.data();
+                    categoryMap[doc.id] = category.name;
                     const option = document.createElement('option');
                     option.value = doc.id;
                     option.textContent = category.name;
@@ -28,15 +31,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function createProductCard(product) {
         const card = document.createElement('div');
         card.className = 'product-card';
-        // Add featured badge if product is featured
         const featuredBadge = product.isFeatured ? 
             '<span class="featured-badge">Featured</span>' : '';
         card.innerHTML = `
-            <img src="${product.imageUrl || '/images/product-placeholder.jpg'}" alt="${product.name}">
+            <img src="${product.image || '/images/product-placeholder.jpg'}" alt="${product.name}">
             <div class="product-info">
                 <h3>${product.name}</h3>
-                <p class="price">₹${product.price}</p>
-                <p class="category">${product.category || 'Uncategorized'}</p>
+                <p class="price">${product.price} BHD</p>
+                <p class="category">${categoryMap[product.categoryId] || 'Uncategorized'}</p>
                 ${featuredBadge}
             </div>
             <div class="product-actions">
@@ -85,7 +87,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize products page
     loadCategories();
-    loadProducts();
+    // Wait a bit to ensure categories are loaded before loading products (for mapping)
+    setTimeout(() => loadProducts(), 500);
+
     // Search functionality
     document.getElementById('search-input').addEventListener('input', function() {
         const searchTerm = this.value;
@@ -99,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadProducts(categoryId, searchTerm);
     });
 });
+
 // Global cart function (compatible with main.js)
 function addToCart(productId) {
     console.log(`Product ${productId} added to cart`);
