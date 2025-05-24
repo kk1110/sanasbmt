@@ -1,60 +1,44 @@
-import { db, ref, push, get, child } from './firebase-config.js';
-// Add this at the top of your admin JS files
-import { auth, onAuthStateChanged } from './firebase-config.js';
+import { db, ref, push, get, child, auth, onAuthStateChanged } from './firebase-config.js';
 
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.href = "login.html";
-  }
+  if (!user) window.location.href = "login.html";
 });
 
-
-
-const categorySelect = document.getElementById("category");
+const categorySelect = document.getElementById("productCategory");
+const form = document.getElementById("addProductForm");
 
 async function loadCategories() {
+  categorySelect.innerHTML = '<option value="">Select Category</option>';
   const snapshot = await get(child(ref(db), 'categories'));
   if (snapshot.exists()) {
-    const categories = snapshot.val();
-    // Clear existing options except first placeholder
-    categorySelect.innerHTML = `<option value="">Select Category</option>`;
-    for (const [key, cat] of Object.entries(categories)) {
-      const option = document.createElement("option");
-      option.value = key;         // store category key as value
-      option.textContent = cat.name; // show category name
-      categorySelect.appendChild(option);
-    }
+    Object.entries(snapshot.val()).forEach(([key, cat]) => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = cat.name;
+      categorySelect.appendChild(opt);
+    });
   }
 }
 loadCategories();
 
-
-document.getElementById("productForm").addEventListener("submit", async function (e) {
+form.addEventListener("submit", async function(e) {
   e.preventDefault();
-
-  const name = document.getElementById("name").value.trim();
-  const price = parseFloat(document.getElementById("price").value.trim());
-  const category = document.getElementById("category").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const imageUrl = document.getElementById("imageUrl").value.trim();
+  const name = document.getElementById("productName").value.trim();
+  const category = categorySelect.value;
+  const description = document.getElementById("productDescription").value.trim();
+  const image = document.getElementById("productImage").value.trim();
   const isFeatured = document.getElementById("isFeatured").checked;
 
-  if (!imageUrl) {
-    alert("Please provide a direct image URL.");
-    return;
-  }
+  if (!name || !category) return alert("Name and category are required.");
 
-  const newProduct = {
+  await push(ref(db, 'products'), {
     name,
-    price,
     category,
     description,
-    image: imageUrl,
-    isFeatured: isFeatured // Optional boolean
-  };
-
-  await push(ref(db, 'products'), newProduct);
+    image,
+    isFeatured
+  });
 
   alert("Product added!");
-  e.target.reset();
+  form.reset();
 });
