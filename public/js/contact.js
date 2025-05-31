@@ -1,4 +1,4 @@
-import { db, ref, push } from '/firebase-config.js';
+import { db, ref, push } from './firebase-config.js';
 
 document.addEventListener('DOMContentLoaded', function() {
   const contactForm = document.getElementById('contactForm');
