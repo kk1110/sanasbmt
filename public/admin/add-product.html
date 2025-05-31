@@ -6,31 +6,22 @@
   <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
-  <h1>Add Product</h1>
-  <form id="addProductForm" autocomplete="off">
-    <div>
-      <label for="productName">Name</label>
-      <input type="text" id="productName" required>
-    </div>
-    <div>
-      <label for="productCategory">Category</label>
-      <select id="productCategory" required></select>
-    </div>
-    <div>
-      <label for="productDescription">Description</label>
-      <textarea id="productDescription"></textarea>
-    </div>
-    <div>
-      <label for="productImage">Image URL</label>
-      <input type="text" id="productImage">
-    </div>
-    <div>
-      <label>
+  <div class="container">
+    <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
+    <h1>Add Product</h1>
+    <form id="addProductForm" autocomplete="off">
+      <input type="text" id="productName" placeholder="Name" required>
+      <select id="productCategory" required>
+        <option value="">Select Category</option>
+      </select>
+      <textarea id="productDescription" placeholder="Description"></textarea>
+      <input type="text" id="productImage" placeholder="Image URL">
+      <label style="display:flex;align-items:center;gap:8px;">
         <input type="checkbox" id="isFeatured"> Top Selling
       </label>
-    </div>
-    <button type="submit">Add Product</button>
-  </form>
+      <button type="submit">Add Product</button>
+    </form>
+  </div>
   <script type="module" src="../js/add-product.js"></script>
 </body>
 </html>

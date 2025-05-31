@@ -1,76 +1,24 @@
-/* General Layout */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #f4f6f8;
-}
-
+/* Container */
 .container {
-  max-width: 800px;
-  margin: auto;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/*edit products*/
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.modal-content {
+  max-width: 700px;
+  margin: 40px auto;
   background: #fff;
-  padding: 25px;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 500px;
-  max-height: 100%;
-  overflow-y: auto;
-  box-sizing: border-box;
+  padding: 32px 32px 24px 32px;
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
 }
 
-.modal-content input,
-.modal-content select,
-.modal-content textarea {
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  font-size: 16px;
+/* Back Button */
+.back-btn {
+  display: inline-block;
+  margin-bottom: 18px;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
 }
-
-.modal-content label {
-  font-weight: bold;
-  margin-top: 10px;
-  display: block;
-}
-
-.modal-content input[type="checkbox"] {
-  margin-top: 15px;
-  margin-right: 8px;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.modal-buttons button {
-  padding: 10px 20px;
-  font-size: 14px;
+.back-btn:hover {
+  color: #0056b3;
 }
 
 /* Headings */
@@ -83,226 +31,168 @@ h1, h2 {
 /* Forms */
 form {
   display: flex;
-  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="url"],
-input[type="file"],
-textarea,
-button {
-  font-size: 16px;
-  padding: 10px;
-  margin-bottom: 15px;
+form input[type="text"],
+form input[type="password"],
+form select,
+form textarea {
+  padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 1rem;
 }
-
-textarea {
+form textarea {
+  min-width: 220px;
+  min-height: 60px;
   resize: vertical;
-  min-height: 100px;
 }
-
-button {
-  background-color: #007bff;
-  color: white;
+form button {
+  padding: 8px 18px;
+  background: #007bff;
+  color: #fff;
   border: none;
-  transition: background-color 0.3s;
+  border-radius: 4px;
+  font-weight: 500;
   cursor: pointer;
+  transition: background 0.2s;
+}
+form button:hover {
+  background: #0056b3;
 }
 
-button:hover {
-  background-color: #0056b3;
+/* Table */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+.admin-table th, .admin-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.admin-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+.admin-table button {
+  margin-right: 8px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.admin-table button:last-child {
+  margin-right: 0;
+  background: #dc3545;
+}
+.admin-table button.edit-btn {
+  background: #ffc107;
+  color: #222;
+}
+.admin-table button.edit-btn:hover {
+  background: #e0a800;
+}
+.admin-table button:hover {
+  opacity: 0.85;
 }
 
-/* Back to dashboard link */
-.back-btn {
-  display: inline-block;
-  margin-bottom: 20px;
-  text-decoration: none;
+/* Login Form */
+.login-form {
+  max-width: 350px;
+  margin: 60px auto 0 auto;
+  background: #fff;
+  padding: 32px 32px 24px 32px;
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  width: 100%;
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin: 40px 0;
+  flex-wrap: wrap;
+}
+.dashboard-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 28px 36px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-width: 180px;
+  transition: box-shadow 0.2s;
+}
+.dashboard-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+}
+.dashboard-card a {
   color: #007bff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
-
-.back-btn:hover {
+.dashboard-card a:hover {
   text-decoration: underline;
 }
 
-/* Admin Navigation */
-.admin-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.admin-nav a {
-  padding: 12px;
-  background-color: #e9ecef;
-  color: #333;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background 0.3s;
-  text-align: center;
-}
-
-.admin-nav a:hover {
-  background-color: #d6d8db;
-}
-
-/* Tables */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-}
-
-th {
-  background-color: #f1f1f1;
-}
-
-/* Action Buttons in Table */
-.action-btns {
-  display: flex;
-  gap: 10px;
-}
-
-.action-btns button {
-  padding: 5px 10px;
-  font-size: 14px;
-}
-
-/* Error / Success Messages */
-.error {
-  color: red;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-
-.success {
-  color: green;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-
-/* Mobile Responsive */
+/* Responsive */
 @media (max-width: 600px) {
-  .admin-nav {
+  .container {
+    padding: 12px 2vw;
+  }
+  .dashboard-cards {
     flex-direction: column;
+    gap: 16px;
   }
-
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-
-  th {
-    background-color: transparent;
-    font-weight: bold;
-  }
-
-  td {
-    border: none;
-    position: relative;
-    padding-left: 50%;
-    white-space: pre-wrap;
-  }
-
-  td::before {
-    position: absolute;
-    top: 12px;
-    left: 10px;
-    width: 45%;
-    white-space: nowrap;
-    font-weight: bold;
-    color: #555;
-    content: attr(data-label);
-  }
-
-  tr {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #ccc;
-  }
-}
-
-/* Add Product Form Enhancements */
-#productForm {
-    background: #fff;
-    padding: 32px 24px 24px 24px;
-    border-radius: 14px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    max-width: 600px;
-    margin: 0 auto;
-    display: flex;
+  form {
     flex-direction: column;
-    gap: 18px;
+    gap: 10px;
+  }
 }
-#productForm label {
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
-}
-#productForm input[type="text"],
-#productForm input[type="number"],
-#productForm input[type="url"],
-#productForm textarea,
-#productForm select {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d1d5db;
-    border-radius: 7px;
-    font-size: 1rem;
-    margin-bottom: 2px;
-    background: #fafbfc;
-    transition: border 0.2s;
-}
-#productForm input[type="text"]:focus,
-#productForm input[type="number"]:focus,
-#productForm input[type="url"]:focus,
-#productForm textarea:focus,
-#productForm select:focus {
-    border: 1.5px solid #007bff;
-    outline: none;
-}
-#productForm textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-#productForm small {
-    margin-top: -8px;
-    margin-bottom: 8px;
-    font-size: 0.97em;
-}
-#productForm .back-btn {
-    margin-bottom: 18px;
-}
-#productForm label[for="isFeatured"],
-#productForm #isFeatured {
-    display: inline-block;
-    margin-top: 10px;
-}
-#productForm button[type="submit"] {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 7px;
-    padding: 14px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-top: 10px;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-}
-#productForm button[type="submit"]:hover {
-    background: #0056b3;
-}
+
+    /* Simple modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.3);
+      align-items: center; justify-content: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 32px 24px;
+      border-radius: 8px;
+      min-width: 320px;
+      max-width: 95vw;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.13);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      right: 16px;
+      top: 12px;
+      font-size: 1.3em;
+      color: #888;
+      cursor: pointer;
+    }

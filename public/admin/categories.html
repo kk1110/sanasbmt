@@ -3,25 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <title>Manage Categories</title>
-  <link rel="stylesheet" href="./css/admin.css">
+  <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
-  <h1>Manage Categories</h1>
-  <form id="categoryForm" autocomplete="off">
-    <input type="text" id="categoryName" placeholder="Category name" required>
-    <button type="submit">Add Category</button>
-  </form>
-  <table>
-    <thead>
-      <tr>
-        <th>Category Name</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="categoryList">
-      <!-- Categories will be loaded here -->
-    </tbody>
-  </table>
-  <script type="module" src="./js/save-category.js"></script>
+  <div class="container">
+    <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
+    <h1>Manage Categories</h1>
+    <form id="categoryForm" autocomplete="off">
+      <input type="text" id="categoryName" placeholder="Category name" required>
+      <button type="submit">Add Category</button>
+    </form>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="categoryList">
+        <!-- Categories will be loaded here -->
+      </tbody>
+    </table>
+  </div>
+  <script type="module" src="../js/save-category.js"></script>
 </body>
 </html>

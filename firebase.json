@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "site": "sanas",
     "public": "public",
     "cleanUrls": true,
     "trailingSlash": false,

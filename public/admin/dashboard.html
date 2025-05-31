@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
   <div class="container">
     <h1>Admin Dashboard</h1>
-    <p>Welcome, <span id="adminEmail">Loading...</span></p>
-
-    <nav class="admin-nav">
-      <a href="add-product.html">➕ Add Product</a>
-      <a href="view-products.html">📦 View Products</a>
-      <a href="categories.html">🗂️ Manage Categories</a>
-    </nav>
-
-    <button id="logoutBtn">Logout</button>
+    <div class="dashboard-cards">
+      <div class="dashboard-card">
+        <a href="add-product.html">Add Product</a>
+      </div>
+      <div class="dashboard-card">
+        <a href="view-products.html">View Products</a>
+      </div>
+      <div class="dashboard-card">
+        <a href="categories.html">Manage Categories</a>
+      </div>
+      <div class="dashboard-card">
+        <a href="logout.html">Logout</a>
+      </div>
+    </div>
   </div>
-
-  <script type="module" src="../js/dashboard.js"></script>
 </body>
 </html>

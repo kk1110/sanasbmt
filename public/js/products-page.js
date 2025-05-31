@@ -63,10 +63,9 @@ function createProductCard(product, id) {
       <p class="description">${product.description || ''}</p>
     </div>
     <div class="product-actions">
-      <a href="https://wa.me/97333553787?text=${encodeURIComponent(whatsappMsg)}"
-         class="btn whatsapp-btn" target="_blank">
-        <i class="fab fa-whatsapp"></i> Enquire
-      </a>
+      <a class="whatsapp-btn" href="https://wa.me/97333553787?text=I'm%20interested%20in%20${encodeURIComponent(whatsappMsg)}" target="_blank">
+      <i class="fab fa-whatsapp"></i> Enquire
+    </a>
     </div>
   `;
   return card;
